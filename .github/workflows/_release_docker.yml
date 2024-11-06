@@ -52,6 +52,7 @@ jobs:
         with:
           context: .
           file: docker/base/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
             BASE_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-${{ matrix.platform }}
@@ -64,6 +65,7 @@ jobs:
         with:
           context: .
           file: docker/dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
             BASE_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-${{ matrix.platform }}
@@ -76,6 +78,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           build-args: |
             BASE_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-${{ matrix.platform }}
