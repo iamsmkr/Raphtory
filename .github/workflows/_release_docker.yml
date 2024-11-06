@@ -12,6 +12,10 @@ jobs:
     name: Build and Publish Docker Images
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        platform: [amd64, arm64]
+
     steps:
       - name: Check out the code
         uses: actions/checkout@v3
@@ -48,11 +52,11 @@ jobs:
         with:
           context: .
           file: docker/base/Dockerfile
-          platforms: linux/amd64,linux/arm64
           push: true
+          build-args: |
+            BASE_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-${{ matrix.platform }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-amd64
-            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-arm64
+            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-${{ matrix.platform }}
 
       # Build and push Python Docker image with package version and platform-specific tags
       - name: Build and push Python Docker image
@@ -60,13 +64,11 @@ jobs:
         with:
           context: .
           file: docker/dockerfile
-          platforms: linux/amd64,linux/arm64
           push: true
-          build-args:
+          build-args: |
             BASE_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-${{ matrix.platform }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory:${{ env.PACKAGE_VERSION }}-python-amd64
-            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory:${{ env.PACKAGE_VERSION }}-python-arm64
+            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory:${{ env.PACKAGE_VERSION }}-python-${{ matrix.platform }}
 
       # Build and push Rust Docker image with package version and platform-specific tags
       - name: Build and push Rust Docker image
@@ -74,8 +76,8 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          platforms: linux/amd64,linux/arm64
           push: true
+          build-args: |
+            BASE_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/raphtory_base:${{ env.RUST_VERSION }}-${{ matrix.platform }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory:${{ env.PACKAGE_VERSION }}-rust-amd64
-            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory:${{ env.PACKAGE_VERSION }}-rust-arm64
+            ${{ secrets.DOCKERHUB_USERNAME }}/raphtory:${{ env.PACKAGE_VERSION }}-rust-${{ matrix.platform }}
