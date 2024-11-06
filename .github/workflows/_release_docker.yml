@@ -1,6 +1,7 @@
 name: _Release 5 - Publish Docker Images to Docker Hub
 on:
   workflow_call:
+  workflow_dispatch:
 
 permissions:
   contents: read
